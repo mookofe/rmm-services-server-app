@@ -19,6 +19,8 @@ public class Service {
     private String name;
     private BigDecimal price;
     private String description;
+    private Boolean supportsWindows;
+    private Boolean supportsMac;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

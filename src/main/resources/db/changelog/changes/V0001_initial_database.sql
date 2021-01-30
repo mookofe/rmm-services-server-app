@@ -10,12 +10,14 @@ create table companies (
 
 -- Services
 create table services (
-  id            VARCHAR(36) not null,
-  name          VARCHAR(50) not null,
-  price         DECIMAL(10,2) not null,
-  description   VARCHAR(512) not null,
-  created_at    TIMESTAMP not null,
-  updated_at    TIMESTAMP not null,
+  id                VARCHAR(36) not null,
+  name              VARCHAR(50) not null,
+  price             DECIMAL(10,2) not null,
+  description       VARCHAR(512) not null,
+  supports_windows  BOOLEAN not null,
+  supports_mac      BOOLEAN not null,
+  created_at        TIMESTAMP not null,
+  updated_at        TIMESTAMP not null,
 
   primary key (id)
 );
