@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import me.victorcruz.ninjaserver.domain.mappers.DeviceMapper;
+import me.victorcruz.ninjaserver.api.v1.mappers.DeviceMapper;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import me.victorcruz.ninjaserver.domain.services.DeviceService;
@@ -30,8 +30,8 @@ public class DeviceController {
     }
 
     @PostMapping
-    public Device create(@Valid @RequestBody DeviceCreateRequest deviceCreate, @PathVariable String companyId) {
-        Device device = deviceCreate.mapToDevice();
+    public Device create(@Valid @RequestBody DeviceCreateRequest createRequest, @PathVariable String companyId) {
+        Device device = DeviceMapper.mapDeviceFromCreateApi(createRequest);
 
         return deviceService.store(companyId, device);
     }
