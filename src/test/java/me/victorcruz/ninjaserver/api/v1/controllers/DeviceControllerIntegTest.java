@@ -1,18 +1,24 @@
 package me.victorcruz.ninjaserver.api.v1.controllers;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import me.victorcruz.ninjaserver.IntegrationTest;
 import org.springframework.test.web.servlet.MockMvc;
+import me.victorcruz.ninjaserver.domain.models.Device;
 import me.victorcruz.ninjaserver.utils.ResourceUtils;
+import me.victorcruz.ninjaserver.factories.DeviceFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doAnswer;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -65,5 +71,28 @@ public class DeviceControllerIntegTest extends IntegrationTest {
                 .andExpect(jsonPath("$.status").value(422))
                 .andExpect(jsonPath("$.errors").exists())
                 .andExpect(jsonPath("$.errors").isArray());
+    }
+
+    @Test
+    void testItReturnsListOfDevices() throws Exception  {
+        // Given
+        String url = String.format(CREATE_DEVICE_PATH, COMPANY_ID);
+        List<Device> devices = DeviceFactory.list();
+
+        when(deviceRepository.findByCompanyId(COMPANY_ID)).thenReturn(devices);
+
+        // When / Then
+        Device firstDevice = devices.get(0);
+
+        mockedMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(firstDevice.getId()))
+                .andExpect(jsonPath("$[0].companyId").value(firstDevice.getCompanyId()))
+                .andExpect(jsonPath("$[0].systemName").value(firstDevice.getSystemName()))
+                .andExpect(jsonPath("$[0].type").value(firstDevice.getType().toString()))
+                .andExpect(jsonPath("$[0].createdAt").value("2021-01-30T00:00:00"))
+                .andExpect(jsonPath("$[0].updatedAt").value("2021-01-30T00:00:00"));
     }
 }

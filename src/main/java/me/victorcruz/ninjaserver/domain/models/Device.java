@@ -5,13 +5,17 @@ import lombok.Builder;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import javax.persistence.Table;
+import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
+import lombok.AllArgsConstructor;
 import javax.persistence.GeneratedValue;
 import org.hibernate.annotations.GenericGenerator;
 import me.victorcruz.ninjaserver.domain.types.DeviceType;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="devices")
 public class Device {
