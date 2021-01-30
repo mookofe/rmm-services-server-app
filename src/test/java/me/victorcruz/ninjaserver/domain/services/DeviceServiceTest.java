@@ -1,17 +1,23 @@
 package me.victorcruz.ninjaserver.domain.services;
 
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import me.victorcruz.ninjaserver.domain.models.Device;
+import me.victorcruz.ninjaserver.factories.DeviceFactory;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
+import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,5 +60,46 @@ public class DeviceServiceTest {
 
         // Then
         verify(deviceRepository, times(1)).findByCompanyId(COMPANY_ID);
+    }
+
+    @Test
+    void testItCanFindDevice() {
+        // Given
+        String deviceId = "d5768226-167c-4c5f-a502-98c4adad621d";
+        Device deviceToFetch = DeviceFactory.any();
+        when(deviceRepository.findByCompanyIdAndId(anyString(), anyString())).thenReturn(deviceToFetch);
+
+        // When
+        sut.find(COMPANY_ID, deviceId);
+
+        // Then
+        verify(deviceRepository, times(1)).findByCompanyIdAndId(COMPANY_ID, deviceId);
+    }
+
+    @Test
+    void testItThrowDeviceNotFoundExceptionWhenDeviceDoesNotExist() {
+        // Given
+        String deviceId = "non-existing-device";
+        when(deviceRepository.findByCompanyIdAndId(anyString(), anyString())).thenReturn(null);
+
+        // When / then
+        assertThrows(DeviceNotFoundException.class, () -> sut.find(COMPANY_ID, deviceId));
+    }
+
+    @Test
+    void testItCanUpdateDevice() {
+        // Given
+        Device deviceToUpdate = new Device();
+        deviceToUpdate.setUpdatedAt(null);
+
+        // When
+        sut.update(deviceToUpdate);
+
+        // Then
+        ArgumentCaptor<Device> deviceCaptor = ArgumentCaptor.forClass(Device.class);
+        verify(deviceRepository, times(1)).save(deviceCaptor.capture());
+        Device updatedDevice = deviceCaptor.getValue();
+
+        assertNotNull(updatedDevice.getUpdatedAt());
     }
 }

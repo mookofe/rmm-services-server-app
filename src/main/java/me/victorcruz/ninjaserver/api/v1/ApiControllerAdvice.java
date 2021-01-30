@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import me.victorcruz.ninjaserver.api.v1.responses.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 
 /**
  * API V1 controller advice
@@ -34,6 +35,18 @@ public class ApiControllerAdvice {
         this.logger.info(ex.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(value = {DeviceNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleDeviceNotFound(DeviceNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+
+        this.logger.info(ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     private List<String> mapValidationExceptionToErrorList(MethodArgumentNotValidException validException) {

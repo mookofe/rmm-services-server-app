@@ -11,4 +11,5 @@ import org.springframework.data.repository.CrudRepository;
 @Repository
 public interface DeviceRepository extends CrudRepository<Device, String> {
     List<Device> findByCompanyId(String companyId);
+    Device findByCompanyIdAndId(String companyId, String id);
 }

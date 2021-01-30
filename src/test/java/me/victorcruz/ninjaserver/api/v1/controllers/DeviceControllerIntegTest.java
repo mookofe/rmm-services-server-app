@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DeviceControllerIntegTest extends IntegrationTest {
     private static final String COMPANY_ID = "d604ce24-a75e-482f-baee-eefac1d462ab";
     private static final String CREATE_DEVICE_PATH = "/api/v1/companies/%s/devices";
+    private static final String DEVICE_PATH = "/api/v1/companies/%s/devices/%s";
 
     @Autowired
     private MockMvc mockedMvc;
@@ -94,5 +96,46 @@ public class DeviceControllerIntegTest extends IntegrationTest {
                 .andExpect(jsonPath("$[0].type").value(firstDevice.getType().toString()))
                 .andExpect(jsonPath("$[0].createdAt").value("2021-01-30T00:00:00"))
                 .andExpect(jsonPath("$[0].updatedAt").value("2021-01-30T00:00:00"));
+    }
+
+    @Test
+    void testItUpdateDeviceSuccessfully() throws Exception {
+        // Given
+        Device persistedDevice = DeviceFactory.any();
+        String url = String.format(DEVICE_PATH, COMPANY_ID, persistedDevice.getId());
+        String payload = ResourceUtils.readFile("requests/device-update.json");
+
+        doAnswer(returnsFirstArg()).when(deviceRepository).save(any());
+        when(deviceRepository.findByCompanyIdAndId(any(), any())).thenReturn(persistedDevice);
+
+        // When / Then
+        mockedMvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(persistedDevice.getId()))
+                .andExpect(jsonPath("$.companyId").value(persistedDevice.getCompanyId()))
+                .andExpect(jsonPath("$.systemName").value("New system name"))
+                .andExpect(jsonPath("$.type").value("WINDOWS_WORK_STATION"))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
+    }
+
+    @Test
+    void testItReturn404IfDeviceWasNotFound() throws Exception {
+        // Given
+        String url = String.format(DEVICE_PATH, COMPANY_ID, "random-id");
+        String payload = ResourceUtils.readFile("requests/device-update.json");
+
+        when(deviceRepository.findByCompanyIdAndId(any(), any())).thenReturn(null);
+
+        // When / Then
+        String expectedError = "Device with id='random-id' for company id='d604ce24-a75e-482f-baee-eefac1d462ab' was not found";
+        mockedMvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value(expectedError))
+                .andExpect(jsonPath("$.status").value(404));
     }
 }

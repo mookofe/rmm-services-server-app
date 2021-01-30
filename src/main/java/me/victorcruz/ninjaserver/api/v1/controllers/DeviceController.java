@@ -5,15 +5,18 @@ import javax.validation.Valid;
 import me.victorcruz.ninjaserver.domain.models.Device;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import me.victorcruz.ninjaserver.domain.mappers.DeviceMapper;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import me.victorcruz.ninjaserver.domain.services.DeviceService;
+import me.victorcruz.ninjaserver.api.v1.requests.DeviceUpdateRequest;
 import me.victorcruz.ninjaserver.api.v1.requests.DeviceCreateRequest;
 
 /**
- * Loan controller
+ * Device controller
  *
  * Entry point for device resources
  */
@@ -36,5 +39,14 @@ public class DeviceController {
     @GetMapping
     public List<Device> list(@PathVariable String companyId) {
         return deviceService.getDevices(companyId);
+    }
+
+    @PutMapping("/{deviceId}")
+    public Device update(@Valid @RequestBody DeviceUpdateRequest updateRequest, @PathVariable String companyId, @PathVariable String deviceId) {
+        Device device = deviceService.find(companyId, deviceId);
+        device.setSystemName(updateRequest.getSystemName());
+        device.setType(updateRequest.getType());
+
+        return deviceService.update(device);
     }
 }
