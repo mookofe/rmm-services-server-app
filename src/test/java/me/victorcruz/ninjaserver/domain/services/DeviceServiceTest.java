@@ -102,4 +102,17 @@ public class DeviceServiceTest {
 
         assertNotNull(updatedDevice.getUpdatedAt());
     }
+
+    @Test
+    void testItCanDeleteDevice() {
+        // Given
+        Device deviceToDelete = DeviceFactory.any();
+        when(deviceRepository.findByCompanyIdAndId(anyString(), anyString())).thenReturn(deviceToDelete);
+
+        // When
+        sut.delete(deviceToDelete.getCompanyId(), deviceToDelete.getId());
+
+        // Then
+        verify(deviceRepository, times(1)).delete(any());
+    }
 }

@@ -4,11 +4,12 @@ import java.util.List;
 import javax.validation.Valid;
 import me.victorcruz.ninjaserver.domain.models.Device;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import me.victorcruz.ninjaserver.api.v1.mappers.DeviceMapper;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import me.victorcruz.ninjaserver.domain.services.DeviceService;
@@ -48,5 +49,10 @@ public class DeviceController {
         device.setType(updateRequest.getType());
 
         return deviceService.update(device);
+    }
+
+    @DeleteMapping("/{deviceId}")
+    public void delete(@PathVariable String companyId, @PathVariable String deviceId) {
+        deviceService.delete(companyId, deviceId);
     }
 }

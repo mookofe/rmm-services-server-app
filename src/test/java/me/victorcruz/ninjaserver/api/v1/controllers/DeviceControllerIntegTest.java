@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
@@ -134,6 +135,34 @@ public class DeviceControllerIntegTest extends IntegrationTest {
         mockedMvc.perform(put(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value(expectedError))
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void testItDeleteDeviceSuccessfully() throws Exception {
+        // Given
+        Device persistedDevice = DeviceFactory.any();
+        String url = String.format(DEVICE_PATH, COMPANY_ID, persistedDevice.getId());
+
+        when(deviceRepository.findByCompanyIdAndId(any(), any())).thenReturn(persistedDevice);
+
+        // When / Then
+        mockedMvc.perform(delete(url))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testItReturn404IfDeviceWasNotFoundDeleting() throws Exception {
+        // Given
+        String url = String.format(DEVICE_PATH, COMPANY_ID, "random-id");
+
+        when(deviceRepository.findByCompanyIdAndId(any(), any())).thenReturn(null);
+
+        // When / Then
+        String expectedError = "Device with id='random-id' for company id='d604ce24-a75e-482f-baee-eefac1d462ab' was not found";
+        mockedMvc.perform(delete(url))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value(expectedError))
                 .andExpect(jsonPath("$.status").value(404));

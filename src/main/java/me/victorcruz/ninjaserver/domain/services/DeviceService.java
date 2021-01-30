@@ -42,4 +42,10 @@ public class DeviceService {
 
         return deviceRepository.save(device);
     }
+
+    public void delete(String companyId, String deviceId) {
+        Device device = this.find(companyId, deviceId);
+
+        deviceRepository.delete(device);
+    }
 }
