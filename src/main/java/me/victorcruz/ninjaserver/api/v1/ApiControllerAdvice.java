@@ -14,6 +14,7 @@ import me.victorcruz.ninjaserver.api.v1.responses.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 import me.victorcruz.ninjaserver.domain.exceptions.NotCompatibleServiceException;
+import me.victorcruz.ninjaserver.domain.exceptions.DeviceServiceNotFoundException;
 import me.victorcruz.ninjaserver.domain.exceptions.ServiceAlreadyExistForDeviceException;
 
 /**
@@ -42,6 +43,12 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler(value = {DeviceNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleDeviceNotFound(DeviceNotFoundException ex) {
+        this.logger.info(ex.getMessage());
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {DeviceServiceNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleDeviceServiceNotFound(DeviceServiceNotFoundException ex) {
         this.logger.info(ex.getMessage());
         return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }

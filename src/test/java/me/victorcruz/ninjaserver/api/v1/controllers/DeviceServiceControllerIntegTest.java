@@ -14,6 +14,7 @@ import me.victorcruz.ninjaserver.factories.ServiceFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import me.victorcruz.ninjaserver.domain.models.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import me.victorcruz.ninjaserver.factories.DeviceServiceFactory;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
 import me.victorcruz.ninjaserver.domain.repositories.ServiceRepository;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceServiceRepository;
@@ -27,6 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
@@ -34,6 +36,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     private static final String COMPANY_ID = "d604ce24-a75e-482f-baee-eefac1d462ab";
     private static final String DEVICE_ID = "e44e32ca-2e7f-4dd2-b995-d60252377955";
     private static final String ADD_DEVICE_SERVICE_PATH = "/api/v1/companies/%s/devices/%s/services";
+    private static final String DELETE_DEVICE_SERVICE_PATH = "/api/v1/companies/%s/devices/%s/services/%s";
 
     @Autowired
     private MockMvc mockedMvc;
@@ -150,5 +153,32 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.error").value("Device Operating System is not compatible with the device"))
                 .andExpect(jsonPath("$.status").value(422));
+    }
+
+    @Test
+    void testItShouldDeleteDeviceServiceSuccessfully() throws Exception {
+        // Given
+        DeviceService persistedDeviceService = DeviceServiceFactory.any();
+        when(deviceServiceRepository.findByIdAndDeviceId(any(), any())).thenReturn(persistedDeviceService);
+
+        String url = String.format(DELETE_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID, persistedDeviceService.getId());
+
+        // When / Then
+        mockedMvc.perform(delete(url))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testItShouldReturn404WhenDeviceServiceWasNotFound() throws Exception {
+        // Given
+        when(deviceServiceRepository.findByIdAndDeviceId(any(), any())).thenReturn(null);
+
+        String url = String.format(DELETE_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID, "non-existing");
+
+        // When / Then
+        mockedMvc.perform(delete(url))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Service for device was not found"))
+                .andExpect(jsonPath("$.status").value(404));;
     }
 }

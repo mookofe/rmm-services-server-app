@@ -9,6 +9,7 @@ import me.victorcruz.ninjaserver.domain.models.DeviceService;
 import me.victorcruz.ninjaserver.domain.repositories.ServiceRepository;
 import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceServiceRepository;
+import me.victorcruz.ninjaserver.domain.exceptions.DeviceServiceNotFoundException;
 import me.victorcruz.ninjaserver.domain.exceptions.ServiceAlreadyExistForDeviceException;
 
 @Component
@@ -45,6 +46,12 @@ public class DeviceServiceManager {
         return deviceServiceRepository.save(deviceService);
     }
 
+    public void deleteService(String companyId, String deviceId, String deviceServiceId) {
+        DeviceService deviceService = getDeviceServiceById(deviceId, deviceServiceId);
+
+        deviceServiceRepository.delete(deviceService);
+    }
+
     private Device getDevice(String companyId, String deviceId) {
         try {
             return deviceManager.find(companyId, deviceId);
@@ -64,5 +71,15 @@ public class DeviceServiceManager {
         if (null != deviceService) {
             throw new ServiceAlreadyExistForDeviceException(service.getId(), device.getId());
         }
+    }
+
+    private DeviceService getDeviceServiceById(String deviceId, String deviceServiceId) {
+        DeviceService deviceService = deviceServiceRepository.findByIdAndDeviceId(deviceServiceId, deviceId);
+
+        if (null == deviceService) {
+            throw new DeviceServiceNotFoundException();
+        }
+
+        return deviceService;
     }
 }

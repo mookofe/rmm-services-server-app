@@ -13,9 +13,11 @@ import me.victorcruz.ninjaserver.domain.models.Service;
 import me.victorcruz.ninjaserver.factories.DeviceFactory;
 import me.victorcruz.ninjaserver.factories.ServiceFactory;
 import me.victorcruz.ninjaserver.domain.models.DeviceService;
+import me.victorcruz.ninjaserver.factories.DeviceServiceFactory;
 import me.victorcruz.ninjaserver.domain.repositories.ServiceRepository;
 import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceServiceRepository;
+import me.victorcruz.ninjaserver.domain.exceptions.DeviceServiceNotFoundException;
 import me.victorcruz.ninjaserver.domain.exceptions.ServiceAlreadyExistForDeviceException;
 
 import static org.mockito.Mockito.when;
@@ -112,6 +114,36 @@ public class DeviceServiceManagerTest {
         assertThrows(
                 ServiceAlreadyExistForDeviceException.class,
                 () -> sut.addService("company-id", "device-id", "service-id")
+        );
+    }
+
+    @Test
+    void testItDeleteDeviceServiceSuccessfully() {
+        // Given
+        DeviceService persistedDeviceService = DeviceServiceFactory.any();
+        when(deviceServiceRepository.findByIdAndDeviceId(anyString(), anyString())).thenReturn(persistedDeviceService);
+
+        // When
+        sut.deleteService(
+                persistedDeviceService.getDevice().getCompanyId(),
+                persistedDeviceService.getDevice().getId(),
+                persistedDeviceService.getId()
+        );
+
+        // Then
+        verify(deviceServiceRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void testItThrowExceptionWhenDeviceServiceWasNotFound() {
+        // Given
+        when(deviceServiceRepository.findByIdAndDeviceId(anyString(), anyString())).thenReturn(null);
+
+        // When / Then
+        assertThrows(
+                DeviceServiceNotFoundException.class,
+                () -> sut.deleteService("company-id", "device-id", "service-id"),
+                "Service for device was not found"
         );
     }
 }

@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import me.victorcruz.ninjaserver.domain.models.DeviceService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +36,10 @@ public class DeviceServiceController {
         DeviceService deviceService = deviceServiceManager.addService(companyId, deviceId, createRequest.getServiceId());
 
         return DeviceServiceMapper.responseFromModel(deviceService);
+    }
+
+    @DeleteMapping("/{deviceServiceId}")
+    public void delete(@PathVariable String companyId, @PathVariable String deviceId,@PathVariable String deviceServiceId) {
+        deviceServiceManager.deleteService(companyId, deviceId, deviceServiceId);
     }
 }
