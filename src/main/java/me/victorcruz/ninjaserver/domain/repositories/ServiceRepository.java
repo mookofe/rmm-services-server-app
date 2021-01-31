@@ -5,7 +5,7 @@ import me.victorcruz.ninjaserver.domain.models.Service;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Company Repository Interface
+ * Service Repository Interface
  */
 @Repository
 public interface ServiceRepository extends CrudRepository<Service, String> {
