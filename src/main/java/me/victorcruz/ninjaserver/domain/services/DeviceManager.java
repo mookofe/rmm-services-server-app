@@ -8,10 +8,10 @@ import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
 import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 
 @Service
-public class DeviceService {
+public class DeviceManager {
     private final DeviceRepository deviceRepository;
 
-    public DeviceService(DeviceRepository deviceRepository) {
+    public DeviceManager(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
     }
 

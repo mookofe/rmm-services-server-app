@@ -12,7 +12,7 @@ import me.victorcruz.ninjaserver.api.v1.mappers.DeviceMapper;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import me.victorcruz.ninjaserver.domain.services.DeviceService;
+import me.victorcruz.ninjaserver.domain.services.DeviceManager;
 import me.victorcruz.ninjaserver.api.v1.requests.DeviceUpdateRequest;
 import me.victorcruz.ninjaserver.api.v1.requests.DeviceCreateRequest;
 
@@ -24,35 +24,35 @@ import me.victorcruz.ninjaserver.api.v1.requests.DeviceCreateRequest;
 @RestController()
 @RequestMapping("/api/v1/companies/{companyId}/devices")
 public class DeviceController {
-    private final DeviceService deviceService;
+    private final DeviceManager deviceManager;
 
-    public DeviceController(DeviceService deviceService) {
-        this.deviceService = deviceService;
+    public DeviceController(DeviceManager deviceManager) {
+        this.deviceManager = deviceManager;
     }
 
     @PostMapping
     public Device create(@Valid @RequestBody DeviceCreateRequest createRequest, @PathVariable String companyId) {
         Device device = DeviceMapper.mapDeviceFromCreateApi(createRequest);
 
-        return deviceService.store(companyId, device);
+        return deviceManager.store(companyId, device);
     }
 
     @GetMapping
     public List<Device> list(@PathVariable String companyId) {
-        return deviceService.getDevices(companyId);
+        return deviceManager.getDevices(companyId);
     }
 
     @PutMapping("/{deviceId}")
     public Device update(@Valid @RequestBody DeviceUpdateRequest updateRequest, @PathVariable String companyId, @PathVariable String deviceId) {
-        Device device = deviceService.find(companyId, deviceId);
+        Device device = deviceManager.find(companyId, deviceId);
         device.setSystemName(updateRequest.getSystemName());
         device.setType(updateRequest.getType());
 
-        return deviceService.update(device);
+        return deviceManager.update(device);
     }
 
     @DeleteMapping("/{deviceId}")
     public void delete(@PathVariable String companyId, @PathVariable String deviceId) {
-        deviceService.delete(companyId, deviceId);
+        deviceManager.delete(companyId, deviceId);
     }
 }

@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DeviceServiceTest {
     private static final String COMPANY_ID = "d604ce24-a75e-482f-baee-eefac1d462ab";
 
-    private DeviceService sut;
+    private DeviceManager sut;
 
     @Mock
     private DeviceRepository deviceRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new DeviceService(deviceRepository);
+        sut = new DeviceManager(deviceRepository);
     }
 
     @Test
