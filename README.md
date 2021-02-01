@@ -1,6 +1,7 @@
 # Ninja Server Application
 
-Small {More description here} 
+Small REST API Service that provides core device management and service handling. This stateless service allows 
+you to manage devices, services and provides comprehensive cost reports.  
 
 - [Stack Summary](#stack-summary)
 - [Public API Endpoints](#api-endpoints) 
@@ -8,14 +9,17 @@ Small {More description here}
 
 ## Stack Summary:
 - Java 11
-- Gradle 6
-- Spring 5.2
 - Spring Boot 2.4.2
+- Spring 5.2
+- Docker 
 - PostgresSQL 13
+- JWT
+- Liquibase 3
 - Spring JPA
 - JUnit 5.7
 - Mockito 3.6
-- Docker 
+- Gradle 6
+
 
 ## API Endpoints
 
