@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import me.victorcruz.ninjaserver.api.v1.responses.ErrorResponse;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import me.victorcruz.ninjaserver.domain.exceptions.DeviceNotFoundException;
 import me.victorcruz.ninjaserver.domain.exceptions.NotCompatibleServiceException;
@@ -67,6 +68,12 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler(value = {ServiceAlreadyExistForDeviceException.class})
     public ResponseEntity<ErrorResponse> handleServiceExisting(ServiceAlreadyExistForDeviceException ex) {
+        this.logger.info(ex.getMessage());
+        return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
         this.logger.info(ex.getMessage());
         return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }

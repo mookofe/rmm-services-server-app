@@ -4,5 +4,6 @@ services:
     image: "postgres:13"
     environment:
       POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "ninja_server"
     ports:
       - "5432:5432"

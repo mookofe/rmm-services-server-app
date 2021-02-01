@@ -8,6 +8,7 @@ import me.victorcruz.ninjaserver.domain.models.Service;
 import me.victorcruz.ninjaserver.factories.ServiceFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import me.victorcruz.ninjaserver.domain.aggregations.CompanyServiceCount;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceServiceRepository;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,6 +31,17 @@ public class CompanyServiceControllerIntegTest extends IntegrationTest {
     DeviceServiceRepository deviceServiceRepository;
 
     @Test
+    void testItReturn403WhenUserIsNotAuthorized() throws Exception {
+        // Given
+        String url = String.format(COMPANY_SERVICES_PATH, COMPANY_ID);
+
+        // When / Then
+        mockedMvc.perform(get(url))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser("test-admin")
     void testItReturnListOfCompanyServices() throws Exception {
         // Given
         CompanyServiceCount companyService = getService();

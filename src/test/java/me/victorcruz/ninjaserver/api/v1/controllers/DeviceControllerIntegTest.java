@@ -11,6 +11,7 @@ import me.victorcruz.ninjaserver.factories.DeviceFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.mockito.Mockito.when;
@@ -38,6 +39,17 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     private DeviceRepository deviceRepository;
 
     @Test
+    void testItReturn403WhenUserIsNotAuthorized() throws Exception {
+        // Given
+        String url = String.format(CREATE_DEVICE_PATH, COMPANY_ID);
+
+        // When / Then
+        mockedMvc.perform(post(url))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser("test-admin")
     void testItCreateDeviceSuccessfully() throws Exception {
         // Given
         String url = String.format(CREATE_DEVICE_PATH, COMPANY_ID);
@@ -58,6 +70,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturnsValidationErrorWhenPayloadIsInvalid() throws Exception  {
         // Given
         String url = String.format(CREATE_DEVICE_PATH, COMPANY_ID);
@@ -77,6 +90,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturnsListOfDevices() throws Exception  {
         // Given
         String url = String.format(CREATE_DEVICE_PATH, COMPANY_ID);
@@ -100,6 +114,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItUpdateDeviceSuccessfully() throws Exception {
         // Given
         Device persistedDevice = DeviceFactory.any();
@@ -123,6 +138,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn404IfDeviceWasNotFound() throws Exception {
         // Given
         String url = String.format(DEVICE_PATH, COMPANY_ID, "random-id");
@@ -141,6 +157,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItDeleteDeviceSuccessfully() throws Exception {
         // Given
         Device persistedDevice = DeviceFactory.any();
@@ -154,6 +171,7 @@ public class DeviceControllerIntegTest extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn404IfDeviceWasNotFoundDeleting() throws Exception {
         // Given
         String url = String.format(DEVICE_PATH, COMPANY_ID, "random-id");

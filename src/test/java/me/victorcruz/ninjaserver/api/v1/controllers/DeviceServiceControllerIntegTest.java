@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import me.victorcruz.ninjaserver.domain.models.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import me.victorcruz.ninjaserver.factories.DeviceServiceFactory;
+import org.springframework.security.test.context.support.WithMockUser;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceRepository;
 import me.victorcruz.ninjaserver.domain.repositories.ServiceRepository;
 import me.victorcruz.ninjaserver.domain.repositories.DeviceServiceRepository;
@@ -51,6 +52,17 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     private DeviceServiceRepository deviceServiceRepository;
 
     @Test
+    void testItReturn403WhenUserIsNotAuthorized() throws Exception {
+        // Given
+        String url = String.format(ADD_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID);
+
+        // When / Then
+        mockedMvc.perform(post(url))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser("test-admin")
     void testItCanAddServiceToDevice() throws Exception {
         // Given
         Device persistedDevice = DeviceFactory.any();
@@ -75,6 +87,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn422WhenDeviceWasNotFound() throws Exception {
         // Given
         String url = String.format(ADD_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID);
@@ -92,6 +105,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn422WhenServiceWasNotFound() throws Exception {
         // Given
         String url = String.format(ADD_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID);
@@ -110,6 +124,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn409WhenServiceAlreadyExistsForDevice() throws Exception {
         // Given
         String url = String.format(ADD_DEVICE_SERVICE_PATH, COMPANY_ID, DEVICE_ID);
@@ -131,6 +146,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItReturn422WhenServiceIsNotCompatibleWithDevice() throws Exception {
         // Given
         Device persistedDevice = DeviceFactory.builder()
@@ -156,6 +172,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItShouldDeleteDeviceServiceSuccessfully() throws Exception {
         // Given
         DeviceService persistedDeviceService = DeviceServiceFactory.any();
@@ -169,6 +186,7 @@ public class DeviceServiceControllerIntegTest  extends IntegrationTest {
     }
 
     @Test
+    @WithMockUser("test-admin")
     void testItShouldReturn404WhenDeviceServiceWasNotFound() throws Exception {
         // Given
         when(deviceServiceRepository.findByIdAndDeviceId(any(), any())).thenReturn(null);

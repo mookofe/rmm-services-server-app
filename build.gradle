@@ -19,10 +19,15 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-validation')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('javax.xml.bind:jaxb-api:2.3.0')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('com.auth0:java-jwt:3+')
+
 	compile('org.liquibase:liquibase-core')
 	runtime('org.postgresql:postgresql:42.2.1')
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {

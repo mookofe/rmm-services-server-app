@@ -34,6 +34,7 @@ create table devices (
   primary key (id)
 );
 
+-- Device services
 create table device_services (
   id            VARCHAR(36) not null,
   device_id     VARCHAR(36) not null REFERENCES devices (id),
@@ -42,4 +43,12 @@ create table device_services (
 
   primary key (id),
   UNIQUE (device_id, service_id)
+);
+
+-- Users
+create table users (
+    id            VARCHAR(36) not null,
+    username      VARCHAR(100) not null,
+    password      VARCHAR(60) not null,
+    company_id    VARCHAR(36) not null REFERENCES companies (id)
 );
