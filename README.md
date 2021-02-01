@@ -3,9 +3,15 @@
 Small REST API Service that provides core device management and service handling. This stateless service allows 
 you to manage devices, services and provides comprehensive cost reports.  
 
+- [Architecture](#architecture)
 - [Stack Summary](#stack-summary)
 - [Public API Endpoints](#api-endpoints) 
 - [Development Setup](#development-setup)
+
+## Architecture:
+The diagram bellow represents a future version of this application using Microservice Architecture hosted on AWS Cloud services.
+
+![](src/main/resources/architecture/architecture-v0.1.png)
 
 ## Stack Summary:
 - Java 11
